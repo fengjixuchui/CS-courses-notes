@@ -15,8 +15,8 @@
 
 <p align="center">
   <a href="https://blog.csdn.net/weixin_42815609"><img src="https://img.shields.io/badge/博客-CSDN-red.svg" alt="https://www.csdn.net/"></a>
-  <a href="./doc/images/扫码_搜索联合传播样式-微信标准绿版.png"><img src="https://img.shields.io/badge/微信公众号-github-verdigris.svg" alt="weixin"></a>
-  <a href="https://www.zhihu.com/people/zai-deng-yici-ji-hui"><img src="https://img.shields.io/badge/知乎-github-blue.svg" alt="https://www.zhihu.com/"></a>
+  <a href="./doc/images/扫码_搜索联合传播样式-微信标准绿版.png"><img src="https://img.shields.io/badge/微信公众号-WeiXin-verdigris.svg" alt="weixin"></a>
+  <a href="https://www.zhihu.com/people/zai-deng-yici-ji-hui"><img src="https://img.shields.io/badge/知乎-ZhiHu-blue.svg" alt="https://www.zhihu.com/"></a>
 </p>
 
 **目录 Catalogue：** 
@@ -31,7 +31,7 @@
 
 🍔 跟着 **视频课程过了一遍** 的课程有：🍳数据结构（[52篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9239803.html)）；🥙操作系统（[24篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9238763.html)）；🍜计算机组成原理（[29篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9471944.html)）；🍩编译原理（[20篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9461302.html)）；🥩汇编（[22篇CSDN笔记](https://blog.csdn.net/weixin_42815609/category_9523771.html)）；
 
-🚒 本仓库中 **基础课** 笔记有：🚗数据结构([本仓库二刷笔记](./notes/data_structure/README.md))；
+🚒 本仓库中 **基础课** 笔记有：🚗数据结构（[本仓库二刷笔记](./notes/data_structure/README.md)）；🚜MIT6.S081: Operating System Engineering（[笔记]()）
 
 👨‍🦳 本仓库中 **读书** 笔记有：
 
