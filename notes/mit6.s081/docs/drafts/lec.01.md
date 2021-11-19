@@ -7,7 +7,7 @@
 <!-- code_chunk_output -->
 
 - [课前预习：阅读教材第一章](#课前预习阅读教材第一章)
-- [作业](#作业)
+- [补充知识点](#补充知识点)
 
 <!-- /code_chunk_output -->
 
@@ -32,9 +32,12 @@
       - [dup和文件重定向](#dup和文件重定向)
     - [1.3 Pipes](#13-pipes)
     - [1.4 File system](#14-file-system)
+      - [数据结构inode](#数据结构inode)
+      - [文件封装命令以及cd](#文件封装命令以及cd)
     - [1.5 Real world](#15-real-world)
     - [1.6 Exercises](#16-exercises)
-- [作业](#作业)
+- [补充知识点](#补充知识点)
+  - [子进程中使用两次fork](#子进程中使用两次fork)
 
 <!-- /code_chunk_output -->
 
@@ -343,36 +346,20 @@ char *argv[2];
 argv[0] = "wc";
 argv[1] = 0；
 
-// 感觉子进程调用 pipe
-// 其中子进程读端 p[0] 就是父进程写端 p[1]
 pipe(p);
 if (fork() == 0) {  // 在子进程中
   close(0);
-  // dup重复管道标准输入的文件描述符
-  // dup(p[0]) 是 0 （因为前面把 0 关了）
-  // 即子进程标准输入 0 和子进程 p[0] 描述同一文件
-  dup(p[0]);
+  dup(p[0]);  // 因为关了 0 ，因此分配 0 与 p[0] 同
+              // 所以子进程标准输入就成了文件 p[0]
   close(p[0]);
-  // 这里一定要关闭写端 p[1]
-  // 否则 read 会阻塞，一直在等 p[1] == EOF
   close(p[1]);
-  // 文件描述符 0 和 p[0] 都关了
-  // wc 会开一个最小的未占用描述符作为标准输入，也就是 0
-  // wc 会 open 一个 fd 作为标准输出，自然就会是 1 即标准输出
   exec("/bin/wc", argv);
 } else {  // 父进程中
-  // 关闭父进程标准输入
   close(p[0]);
-  // p[1] 就是给父进程管道标准输出写入
   write(p[1], "hello world\n", 12);
-  // 关闭
   close(p[1]);
 }
 ```
-
-思考了半天上面的代码，得出结论（虽然书中没有写）：
-- 如果调用两次 `pipe(p1), pipe(p2)`
-- 则 `p1[1]` 前一个管道写端就是 `p2[0]` 后一个管道读端
 
 这里再举个源码例子[user/sh.c#L100](https://github.com/mit-pdos/xv6-riscv/blob/riscv//user/sh.c#L100)：
 
@@ -424,7 +411,9 @@ runcmd(struct cmd *cmd)
       close(p[1]);
       runcmd(pcmd->left);
     }
-    if(fork1() == 0){
+    if(fork1() == 0){  // 上面 fork1() 的子进程不会到这里，因为 runcmd 会 exit()
+    // 这里只会是主进程创建的第二个子进程
+    // 在 runcmd 里可能也会有管道，因此最终可能会成为一棵进程树
       close(0);
       dup(p[0]);
       close(p[0]);
@@ -481,8 +470,146 @@ fork1(void)
 
 #### 1.4 File system
 
+在 C 语言中，系统调用包括：
+- `chdir()` 改变当前的工作目录
+
+```c
+chdir("/a");
+chdir("b");
+open("c", O_RDONLY);
+
+// 等价于
+open("/a/b/c", O_RDONLY);
+```
+
+- `mkdir("/new_dir")` 创建一个新目录
+- `open` 加上参数 `O_CREATE` 创建新文件 `fd = open("/dir/file", O_CREATE|O_WRONLY);`
+- `mknod` 创建指向硬件的特殊文件 `mknod("/console", 1, 1);`
+
+##### 数据结构inode
+
+`inode` 是一种数据结构，用于描述文件，一个文件可以有多个名字（`links`）。
+
+`fstat` 用于从 `inode` 中通过文件描述符提取文件信息，哪些信息呢？见 kernel/stat.h ：
+```c
+#define T_DIR      1  // Directory
+#define T_FILE     2  // File
+#define T_DEVICE   3  // Device
+
+struct stat {
+  int dev;      // File system's disk device
+  uint ino;     // Inode number
+  short type;   // Type of file
+  short nlink;  // Number of links to file
+  uint64 size;  // Size of file in bytes
+}
+```
+
+`link` 系统调用可以增加文件名称，如下：
+```c
+open("a", O_CREATE|O_WRONLY);
+link("a", "b");
+```
+
+此时 `a` 与 `b` 完全等价。`nlink` 就是 2 了。
+
+`unlink` 系统调用可以释放名称。如下。
+
+```c
+unlink("a");
+```
+
+当一个 `inode` 的 `link` 都没了，并且没有文件描述符指向它了，这个 `inode` 就会被释放。如下。
+
+```c
+fd = open("/tmp/xyz", O_CREATE|O_RDWR);
+unlink("/tmp/xyz");
+```
+
+上面是一种常用的创建临时 `inode` 的方法，当进程结束或者 `fd` 被关闭时，这个 `inode` 也被释放。
+
+##### 文件封装命令以及cd
+
+`Unix` 提供了文件工具比如 `mkdir` 、 `ln` 、 `rm` 在用户层（`shell`）使用。在当时，这种设计其实很有开创新，因为很多同时期的其它系统，其类似的命令是与 `shell` 强集成的，而 `shell` 又是直接在内核建立起来的。
+
+只有一个特例，`cd`不是文件，而是在 `shell` 里被特殊判断的字符。因为其要改变主进程（`shell`）的工作路径，而非子进程的。
+
 #### 1.5 Real world
+
+记录一下 `xv6` 并不是完备的 POSIX （`Portable Operating System Interface`）。
 
 #### 1.6 Exercises
 
-## 作业
+在 Linux 里跑就行，反正都是 POSIX ，用 `#include <unistd.h>` 调 `fork()` 。
+
+参考[6.828/2019 Exercise 1.6.1: pingpong](https://ypl.coffee/xv6-exercise-pingpong/)。
+
+见 [../exercises/1.6.ping_pong.c](../exercises/1.6.ping_pong.c) 。
+
+```bash
+gcc -o 1.6.ping_pong 1.6.ping_pong.c
+./1.6.ping_pong
+```
+
+输出：
+```
+parent p2[0] 5
+child p2[0] 5
+parent p2[1] 6
+child p2[1] 6
+parent p1[0] 3
+child p1[0] 3
+parent p1[1] 4
+child p1[1] 4
+average RTT: 0.037730 ms
+exchanges per second: 26503 times
+```
+
+- 可以看出父子进程轮流运行
+- 我的 wsl2 以及电脑本身真的挺慢的...
+
+## 补充知识点
+
+### 子进程中使用两次fork
+
+运行以下 `c` 程序：
+```c
+#include <stdio.h>
+#include <unistd.h>
+
+int main()
+{
+    int pid1, pid2;
+
+    printf("before fork\n");
+    pid1 = fork();
+    printf("%d: 1 %d\n", pid1, pid1);
+    printf("%d: after fork1\n", pid1);
+    pid2 = fork();
+    printf("%d: 2 %d\n", pid1, pid2);
+    printf("%d: after fork2\n", pid1);
+
+    return 0;
+}
+```
+
+输出：
+```
+before fork
+970: 1 970       // 主进程创造了子进程 970 在主进程中打印此句
+970: after fork1 // 主进程
+0: 1 0           // 970 进程调用 fork 返回 0 （ 970 是主进程的子进程）
+970: 2 971       // 主进程再次 fork 创造了子进程 971
+0: after fork1   // 970
+970: after fork2 // 主进程
+970: 2 0         // 971 进程 fork 得到的是 0 （ 971 是主进程的子进程）
+970: after fork2 // 971
+0: 2 972         // 970 进程再次 fork 则作为父进程创建 972
+0: after fork2   // 970
+0: 2 0           // 972 进程 fork 得到 0 （ 972 是 970 子进程）
+0: after fork2   // 972 进程
+```
+
+可以看到：
+- 只有一个 `before fork` ，说明 `fork()` 后，子进程从这句 `fork()` 开始运行
+- 最后有四个 `after fork2` 因为这里一共创建了四个进程，具体看我上面分析
