@@ -13,6 +13,9 @@
   - [LEC 3 (fk): OS organization and system calls](#lec-3-fk-os-organization-and-system-calls)
   - [LEC 4 (fk): Page tables (boards)](#lec-4-fk-page-tables-boards)
   - [LEC 5 (TAs/nk): Calling conventions and stack frames RISC-V](#lec-5-tasnk-calling-conventions-and-stack-frames-risc-v)
+  - [LEC 6 (rtm): Isolation & system call entry/exit](#lec-6-rtm-isolation-system-call-entryexit)
+  - [LEC 7 (fk): Q&A labs](#lec-7-fk-qa-labs)
+  - [LEC 8 (fk): Page faults](#lec-8-fk-page-faults)
 
 <!-- /code_chunk_output -->
 
@@ -182,18 +185,101 @@ sep 21
   - [18.2 RVG Calling Convention](./docs/drafts/lec.05.md#182-rvg-calling-convention)
   - [18.3 Soft-Float Calling Convention](./docs/drafts/lec.05.md#183-soft-float-calling-convention)
 
-课上内容：[./docs/drafts/images/2022032212.png](./docs/drafts/images/2022032212.png)
+课上内容：[./docs/drafts/lec.05c.md](./docs/drafts/lec.05c.md)
 
-- [关于 RISC-V 处理器与指令集](./docs/drafts/images/2022032212.png#关于-risc-v-处理器与指令集)
-  - [ISA（Instruction Sets Architecture）](./docs/drafts/images/2022032212.png#isainstruction-sets-architecture)
-  - [x86指令集（CISC）](./docs/drafts/images/2022032212.png#x86指令集cisc)
-  - [简单提一下 ARM 指令架构（RISC）](./docs/drafts/images/2022032212.png#简单提一下-arm-指令架构risc)
-  - [RISC-V 区分了基本int指令与其他标准扩展](./docs/drafts/images/2022032212.png#risc-v-区分了基本int指令与其他标准扩展)
-- [汇编代码在内存的位置及其执行](./docs/drafts/images/2022032212.png#汇编代码在内存的位置及其执行)
-  - [“代码段”的具象化.text](./docs/drafts/images/2022032212.png#代码段的具象化text)
-  - [关于 gdb](./docs/drafts/images/2022032212.png#关于-gdb)
-- [关于 RISC-V 寄存器](./docs/drafts/images/2022032212.png#关于-risc-v-寄存器)
-- [关于栈 stack](./docs/drafts/images/2022032212.png#关于栈-stack)
-  - [【重要】关于stack的gdb调试（查看当前函数调用）](./docs/drafts/images/2022032212.png#重要关于stack的gdb调试查看当前函数调用)
-- [struct （内存中是一段连续的地址）](./docs/drafts/images/2022032212.png#struct-内存中是一段连续的地址)
+- [关于 RISC-V 处理器与指令集](./docs/drafts/lec.05c.md#关于-risc-v-处理器与指令集)
+  - [ISA（Instruction Sets Architecture）](./docs/drafts/lec.05c.md#isainstruction-sets-architecture)
+  - [x86指令集（CISC）](./docs/drafts/lec.05c.md#x86指令集cisc)
+  - [简单提一下 ARM 指令架构（RISC）](./docs/drafts/lec.05c.md#简单提一下-arm-指令架构risc)
+  - [RISC-V 区分了基本int指令与其他标准扩展](./docs/drafts/lec.05c.md#risc-v-区分了基本int指令与其他标准扩展)
+- [汇编代码在内存的位置及其执行](./docs/drafts/lec.05c.md#汇编代码在内存的位置及其执行)
+  - [“代码段”的具象化.text](./docs/drafts/lec.05c.md#代码段的具象化text)
+  - [关于 gdb](./docs/drafts/lec.05c.md#关于-gdb)
+- [关于 RISC-V 寄存器](./docs/drafts/lec.05c.md#关于-risc-v-寄存器)
+- [关于栈 stack](./docs/drafts/lec.05c.md#关于栈-stack)
+  - [【重要】关于stack的gdb调试（查看当前函数调用）](./docs/drafts/lec.05c.md#重要关于stack的gdb调试查看当前函数调用)
+- [struct （内存中是一段连续的地址）](./docs/drafts/lec.05c.md#struct-内存中是一段连续的地址)
 
+#### LEC 6 (rtm): Isolation & system call entry/exit
+
+sep 23
+
+- LEC 6 (rtm): [Isolation & system call entry/exit](./docs/lec/l-internal.txt) ([video](https://youtu.be/T26UuauaxWA))
+- Preparation: [Read Chapter 4, except 4.6](./docs/lec/book-riscv-rev1.pdf) and kernel/riscv.h, kernel/trampoline.S, and kernel/trap.c
+- Assignment: <a href="./docs/assignment/Lab_ Traps.html">Lab traps: Trap</a>
+
+课前读书笔记在这里：[./docs/drafts/lec.06.md](./docs/drafts/lec.06.md)
+
+- [读书 Chapter 4 Traps and system calls](./docs/drafts/lec.06.md#读书-chapter-4-traps-and-system-calls)
+  - [4.1 RISC-V trap machinery](./docs/drafts/lec.06.md#41-risc-v-trap-machinery)
+  - [4.2 Traps from user space](./docs/drafts/lec.06.md#42-traps-from-user-space)
+  - [4.3 Code: Calling system calls](./docs/drafts/lec.06.md#43-code-calling-system-calls)
+  - [4.4 Code: System call arguments](./docs/drafts/lec.06.md#44-code-system-call-arguments)
+  - [4.5 Traps from kernel space](./docs/drafts/lec.06.md#45-traps-from-kernel-space)
+  - [4.7 Real world](./docs/drafts/lec.06.md#47-real-world)
+  - [4.8 Exercises](./docs/drafts/lec.06.md#48-exercises)
+
+课堂笔记在这里：[./docs/drafts/lec.06c.md](./docs/drafts/lec.06c.md)
+
+- [trap概述](./docs/drafts/lec.06c.md#trap概述)
+  - [trap时硬件以及kernel要做什么？](./docs/drafts/lec.06c.md#trap时硬件以及kernel要做什么)
+  - [supervisor mode能做什么](./docs/drafts/lec.06c.md#supervisor-mode能做什么)
+  - [trap 执行流程](./docs/drafts/lec.06c.md#trap-执行流程)
+- [使用gdb跟踪trap流程](./docs/drafts/lec.06c.md#使用gdb跟踪trap流程)
+  - [查看 shell 调用 write（打断点、看寄存器、看页表）](./docs/drafts/lec.06c.md#查看-shell-调用-write打断点-看寄存器-看页表)
+  - [进入 ecall](./docs/drafts/lec.06c.md#进入-ecall)
+  - [ecall 实际上只做了三件事（我们该额外做什么）](./docs/drafts/lec.06c.md#ecall-实际上只做了三件事我们该额外做什么)
+  - [trampoline page的起始，也是uservec函数的起始](./docs/drafts/lec.06c.md#trampoline-page的起始也是uservec函数的起始)
+  - [usertrap函数是位于trap.c文件的一个函数](./docs/drafts/lec.06c.md#usertrap函数是位于trapc文件的一个函数)
+  - [usertrapret函数，在返回到用户空间之前内核要做的工作](./docs/drafts/lec.06c.md#usertrapret函数在返回到用户空间之前内核要做的工作)
+  - [userret函数（又到了trampoline）](./docs/drafts/lec.06c.md#userret函数又到了trampoline)
+
+lab 先不做，先把下节课答疑听了再做。
+
+#### LEC 7 (fk): Q&A labs
+
+sep 28
+
+- LEC 7 (fk): [Q&A labs](./docs/lec/l-QA1.txt) ([boards](./docs/lec/l-QA1.pdf)) [video](https://youtu.be/_WWjNIJAfVg)
+
+一些课堂笔记：[./docs/drafts/lec.07c.md](./docs/drafts/lec.07c.md)
+- [复习页表](./docs/drafts/lec.07c.md#复习页表)
+  - [关于 guard page 和 stack page](./docs/drafts/lec.07c.md#关于-guard-page-和-stack-page)
+- [之前的 page table lab](./docs/drafts/lec.07c.md#之前的-page-table-lab)
+  - [第二问：共享内核页](./docs/drafts/lec.07c.md#第二问共享内核页)
+
+好了，现在把 Lab traps: Trap 给做了吧，笔记：[./docs/drafts/lec.07hw.md](./docs/drafts/lec.07hw.md)
+
+- [RISC-V assembly（汇编、RISC-V是小端机）](./docs/drafts/lec.07hw.md#risc-v-assembly汇编-risc-v是小端机)
+- [Backtrace 报错时回溯打印栈 stack](./docs/drafts/lec.07hw.md#backtrace-报错时回溯打印栈-stack)
+- [Alarm 根据 tick 做回调](./docs/drafts/lec.07hw.md#alarm-根据-tick-做回调)
+  - [test0: invoke handler](./docs/drafts/lec.07hw.md#test0-invoke-handler)
+  - [test1/test2(): resume interrupted code](./docs/drafts/lec.07hw.md#test1test2-resume-interrupted-code)
+
+#### LEC 8 (fk): Page faults
+
+sep 30
+
+- LEC 8 (fk): [Page faults](./docs/lec/l-pgfaults.txt) ([boards](./docs/lec/l-pgfaults.pdf)) [video](https://youtu.be/KSYO-gTZo0A)
+- Preparation: Read [Section 4.6](./docs/lec/book-riscv-rev1.pdf)
+- Assignment: <a href="./docs/lec/Lab_ xv6 lazy page allocation.html">Lab lazy: Lazy allocation</a>
+
+读了一个小节，与课堂内容有很多重叠，不详细记录了：[./docs/drafts/lec.08.md](./docs/drafts/lec.08.md)
+- [读书 4.6 Page-fault exceptions](./docs/drafts/lec.08.md#读书-46-page-fault-exceptions)
+  - [什么是 page-fault exception](./docs/drafts/lec.08.md#什么是-page-fault-exception)
+
+上课：[./docs/drafts/lec.08.md](./docs/drafts/lec.08.md)
+- [page fault 课程内容概述](./docs/drafts/lec.08.md#page-fault-课程内容概述)
+  - [内核需要什么样的信息才能够响应 page fault](./docs/drafts/lec.08.md#内核需要什么样的信息才能够响应-page-fault)
+- [Lazy page allocation (sbrk)](./docs/drafts/lec.08.md#lazy-page-allocation-sbrk)
+  - [简单修改 sys_sbrk](./docs/drafts/lec.08.md#简单修改-sys_sbrk)
+- [Zero Fill On Demand](./docs/drafts/lec.08.md#zero-fill-on-demand)
+- [Copy On Write Fork](./docs/drafts/lec.08.md#copy-on-write-fork)
+- [Demand paging](./docs/drafts/lec.08.md#demand-paging)
+  - [在lazy allocation中，如果内存耗尽了该如何办？（dirty page）](./docs/drafts/lec.08.md#在lazy-allocation中如果内存耗尽了该如何办dirty-page)
+- [Memory Mapped Files](./docs/drafts/lec.08.md#memory-mapped-files)
+
+lab 就是设计一个 lazy allocation ，挺简单的：[./docs/drafts/lec.08hw.md](./docs/drafts/lec.08hw.md)
+- [Eliminate allocation from sbrk()](./docs/drafts/lec.08hw.md#eliminate-allocation-from-sbrk)
+- [Lazy allocation](./docs/drafts/lec.08hw.md#lazy-allocation)
+- [Lazytests and Usertests](./docs/drafts/lec.08hw.md#lazytests-and-usertests)
