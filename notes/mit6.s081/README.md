@@ -9,13 +9,14 @@
 - [🥞本仓库资源](#本仓库资源)
 - [🍱课程索引](#课程索引)
   - [LEC 1 (rtm): Introduction and examples](#lec-1-rtm-introduction-and-examples)
-  - [LEC 2 (TAs/dm): C and gdb (pointers example)](#lec-2-tasdm-c-and-gdb-pointers-example)
+  - [LEC 2 (TAs/dm): C and gdb](#lec-2-tasdm-c-and-gdb)
   - [LEC 3 (fk): OS organization and system calls](#lec-3-fk-os-organization-and-system-calls)
-  - [LEC 4 (fk): Page tables (boards)](#lec-4-fk-page-tables-boards)
+  - [LEC 4 (fk): Page tables](#lec-4-fk-page-tables)
   - [LEC 5 (TAs/nk): Calling conventions and stack frames RISC-V](#lec-5-tasnk-calling-conventions-and-stack-frames-risc-v)
   - [LEC 6 (rtm): Isolation & system call entry/exit](#lec-6-rtm-isolation-system-call-entryexit)
   - [LEC 7 (fk): Q&A labs](#lec-7-fk-qa-labs)
   - [LEC 8 (fk): Page faults](#lec-8-fk-page-faults)
+  - [LEC 9 (fk): Interrupts](#lec-9-fk-interrupts)
 
 <!-- /code_chunk_output -->
 
@@ -72,7 +73,7 @@ sep 2
 
 本节作业笔记：[./docs/drafts/lec.01hw.md](./docs/drafts/lec.01hw.md)
 
-#### LEC 2 (TAs/dm): C and gdb (pointers example)
+#### LEC 2 (TAs/dm): C and gdb
 
 sep 9
 
@@ -132,7 +133,7 @@ sep 9
 
 然后把 lab 2 做了吧：[./docs/drafts/lec.03hw.md](./docs/drafts/lec.03hw.md)
 
-#### LEC 4 (fk): Page tables (boards)
+#### LEC 4 (fk): Page tables
 
 sep 16
 
@@ -262,24 +263,77 @@ sep 30
 
 - LEC 8 (fk): [Page faults](./docs/lec/l-pgfaults.txt) ([boards](./docs/lec/l-pgfaults.pdf)) [video](https://youtu.be/KSYO-gTZo0A)
 - Preparation: Read [Section 4.6](./docs/lec/book-riscv-rev1.pdf)
-- Assignment: <a href="./docs/lec/Lab_ xv6 lazy page allocation.html">Lab lazy: Lazy allocation</a>
+- Assignment: <a href="./docs/assignment/Lab_ xv6 lazy page allocation.html">Lab lazy: Lazy allocation</a>
 
 读了一个小节，与课堂内容有很多重叠，不详细记录了：[./docs/drafts/lec.08.md](./docs/drafts/lec.08.md)
 - [读书 4.6 Page-fault exceptions](./docs/drafts/lec.08.md#读书-46-page-fault-exceptions)
   - [什么是 page-fault exception](./docs/drafts/lec.08.md#什么是-page-fault-exception)
 
-上课：[./docs/drafts/lec.08.md](./docs/drafts/lec.08.md)
-- [page fault 课程内容概述](./docs/drafts/lec.08.md#page-fault-课程内容概述)
-  - [内核需要什么样的信息才能够响应 page fault](./docs/drafts/lec.08.md#内核需要什么样的信息才能够响应-page-fault)
-- [Lazy page allocation (sbrk)](./docs/drafts/lec.08.md#lazy-page-allocation-sbrk)
-  - [简单修改 sys_sbrk](./docs/drafts/lec.08.md#简单修改-sys_sbrk)
-- [Zero Fill On Demand](./docs/drafts/lec.08.md#zero-fill-on-demand)
-- [Copy On Write Fork](./docs/drafts/lec.08.md#copy-on-write-fork)
-- [Demand paging](./docs/drafts/lec.08.md#demand-paging)
-  - [在lazy allocation中，如果内存耗尽了该如何办？（dirty page）](./docs/drafts/lec.08.md#在lazy-allocation中如果内存耗尽了该如何办dirty-page)
-- [Memory Mapped Files](./docs/drafts/lec.08.md#memory-mapped-files)
+上课：[./docs/drafts/lec.08c.md](./docs/drafts/lec.08c.md)
+- [page fault 课程内容概述](./docs/drafts/lec.08c.md#page-fault-课程内容概述)
+  - [内核需要什么样的信息才能够响应 page fault](./docs/drafts/lec.08c.md#内核需要什么样的信息才能够响应-page-fault)
+- [Lazy page allocation (sbrk)](./docs/drafts/lec.08c.md#lazy-page-allocation-sbrk)
+  - [简单修改 sys_sbrk](./docs/drafts/lec.08c.md#简单修改-sys_sbrk)
+- [Zero Fill On Demand](./docs/drafts/lec.08c.md#zero-fill-on-demand)
+- [Copy On Write Fork](./docs/drafts/lec.08c.md#copy-on-write-fork)
+- [Demand paging](./docs/drafts/lec.08c.md#demand-paging)
+  - [在lazy allocation中，如果内存耗尽了该如何办？（dirty page）](./docs/drafts/lec.08c.md#在lazy-allocation中如果内存耗尽了该如何办dirty-page)
+- [Memory Mapped Files](./docs/drafts/lec.08c.md#memory-mapped-files)
 
 lab 就是设计一个 lazy allocation ，挺简单的：[./docs/drafts/lec.08hw.md](./docs/drafts/lec.08hw.md)
 - [Eliminate allocation from sbrk()](./docs/drafts/lec.08hw.md#eliminate-allocation-from-sbrk)
 - [Lazy allocation](./docs/drafts/lec.08hw.md#lazy-allocation)
 - [Lazytests and Usertests](./docs/drafts/lec.08hw.md#lazytests-and-usertests)
+
+#### LEC 9 (fk): Interrupts
+
+oct 5
+
+- LEC 9 (fk): [Interrupts](./docs/lec/l-interrupt.txt) ([boards](./docs/lec/l-interrupt.pdf)) [video](https://youtu.be/zRnGNndcVEA)
+- Preparation: Read [Chapter 5](./docs/lec/book-riscv-rev1.pdf) and kernel/kernelvec.S, kernel/plic.c, kernel/console.c, kernel/uart.c, kernel/printf.c
+
+课前预习读读书：[./docs/drafts/lec.09.md](./docs/drafts/lec.09.md)
+- [Chapter 5 Interrupts and device drivers](./docs/drafts/lec.09.md#chapter-5-interrupts-and-device-drivers)
+  - [5.1 Code: Console input](./docs/drafts/lec.09.md#51-code-console-input)
+  - [5.2 Code: Console output (I/O concurrency IO 并行)](./docs/drafts/lec.09.md#52-code-console-output-io-concurrency-io-并行)
+  - [5.3 Concurrency in drivers](./docs/drafts/lec.09.md#53-concurrency-in-drivers)
+  - [5.4 Timer interrupts](./docs/drafts/lec.09.md#54-timer-interrupts)
+  - [5.5 Real world (DMA 这里引出了 Linux 常用的多路复用技术 polling 等)](./docs/drafts/lec.09.md#55-real-world-dma-这里引出了-linux-常用的多路复用技术-polling-等)
+  - [5.6 Exercises](./docs/drafts/lec.09.md#56-exercises)
+- [中断相关代码](./docs/drafts/lec.09.md#中断相关代码)
+  - [kernel/kernelvec.S](./docs/drafts/lec.09.md#kernelkernelvecs)
+  - [kernel/plic.c](./docs/drafts/lec.09.md#kernelplicc)
+  - [kernel/console.c](./docs/drafts/lec.09.md#kernelconsolec)
+  - [kernel/uart.c](./docs/drafts/lec.09.md#kerneluartc)
+  - [kernel/printf.c](./docs/drafts/lec.09.md#kernelprintfc)
+
+上课内容：[./docs/drafts/lec.09c.md](./docs/drafts/lec.09c.md)
+- [真实操作系统内存使用情况](./docs/drafts/lec.09c.md#真实操作系统内存使用情况)
+- [Interrupt硬件部分](./docs/drafts/lec.09c.md#interrupt硬件部分)
+  - [中断是从哪里产生的？](./docs/drafts/lec.09c.md#中断是从哪里产生的)
+- [Interrupt软件部分](./docs/drafts/lec.09c.md#interrupt软件部分)
+  - [设备驱动概述（UART设备为例）](./docs/drafts/lec.09c.md#设备驱动概述uart设备为例)
+  - [如何对设备进行编程（memory mapped I/O）](./docs/drafts/lec.09c.md#如何对设备进行编程memory-mapped-io)
+  - [在XV6中设置中断](./docs/drafts/lec.09c.md#在xv6中设置中断)
+  - [start.c的start函数以及 main 中如何处理 External 中断](./docs/drafts/lec.09c.md#startc的start函数以及-main-中如何处理-external-中断)
+  - [PLIC编程，让断能被CPU感知以及main中scheduler让CPU接收中断](./docs/drafts/lec.09c.md#plic编程让断能被cpu感知以及main中scheduler让cpu接收中断)
+- [详细看UART驱动实现](./docs/drafts/lec.09c.md#详细看uart驱动实现)
+  - [UART驱动的top部分](./docs/drafts/lec.09c.md#uart驱动的top部分)
+  - [UART驱动的bottom部分](./docs/drafts/lec.09c.md#uart驱动的bottom部分)
+- [Interrupt相关的并发（对buffer的producer/consumer并发）](./docs/drafts/lec.09c.md#interrupt相关的并发对buffer的producerconsumer并发)
+- [UART读取键盘输入](./docs/drafts/lec.09c.md#uart读取键盘输入)
+- [Interrupt的演进（引出polling）](./docs/drafts/lec.09c.md#interrupt的演进引出polling)
+
+好了，在进入 Multiprocessors and locking 之前，先把 page allocation 的内容解决掉，把 Lab 6 Copy-on-Write Fork for xv6 写了：[./docs/drafts/lec.09hw.md](./docs/drafts/lec.09hw.md)
+- [Implement copy-on write](./docs/drafts/lec.09hw.md#implement-copy-on-write)
+
+#### LEC 10 (fk): Multiprocessors and locking
+
+oct 7
+
+- LEC 10 (fk): [Multiprocessors and locking](./docs/lec/l-lockv2.txt) ([boards](./docs/lec/l-lock.pdf)) [video](https://youtu.be/NGXu3vN7yAk)
+- Preparation: Read "[Locking](./docs/lec/book-riscv-rev1.pdf)" with kernel/spinlock.h and kernel/spinlock.c
+- Assignment: <a href="./docs/assignment/Lab_ Copy-on-Write Fork for xv6.html">Lab cow: Copy-on-write fork</a>
+
+这个 Lab 上节课写完了。
+
