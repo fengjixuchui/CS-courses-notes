@@ -17,6 +17,14 @@
   - [LEC 7 (fk): Q&A labs](#lec-7-fk-qa-labs)
   - [LEC 8 (fk): Page faults](#lec-8-fk-page-faults)
   - [LEC 9 (fk): Interrupts](#lec-9-fk-interrupts)
+  - [LEC 10 (fk): Multiprocessors and locking](#lec-10-fk-multiprocessors-and-locking)
+  - [LEC 11 (rtm): Thread switching](#lec-11-rtm-thread-switching)
+  - [LEC 12 (rtm): Q&A labs](#lec-12-rtm-qa-labs)
+  - [LEC 13 (rtm): sleep&wakeup and code](#lec-13-rtm-sleepwakeup-and-code)
+  - [LEC 14 (fk): File systems](#lec-14-fk-file-systems)
+  - [LEC 15 (fk): Crash recovery](#lec-15-fk-crash-recovery)
+  - [LEC 16 (rtm): File system performance and fast crash recovery](#lec-16-rtm-file-system-performance-and-fast-crash-recovery)
+  - [LEC 17 (fk): Virtual memory for applications](#lec-17-fk-virtual-memory-for-applications)
 
 <!-- /code_chunk_output -->
 
@@ -337,3 +345,221 @@ oct 7
 
 这个 Lab 上节课写完了。
 
+读书预习一下：[./docs/drafts/lec.10.md](./docs/drafts/lec.10.md)
+- [Chapter 6 Locking](./docs/drafts/lec.10.md#chapter-6-locking)
+  - [6.1 Race conditions 竞态条件](./docs/drafts/lec.10.md#61-race-conditions-竞态条件)
+    - [critical sectio 临界区](./docs/drafts/lec.10.md#critical-sectio-临界区)
+  - [6.2 Code: Locks 这里以自旋锁 spinlock 为例](./docs/drafts/lec.10.md#62-code-locks-这里以自旋锁-spinlock-为例)
+  - [6.3 Code: Using locks](./docs/drafts/lec.10.md#63-code-using-locks)
+  - [6.4 Deadlock and lock ordering](./docs/drafts/lec.10.md#64-deadlock-and-lock-ordering)
+  - [6.5 Locks and interrupt handlers](./docs/drafts/lec.10.md#65-locks-and-interrupt-handlers)
+  - [6.6 Instruction and memory ordering](./docs/drafts/lec.10.md#66-instruction-and-memory-ordering)
+  - [6.7 Sleep locks 引出不用自旋锁 spinlock](./docs/drafts/lec.10.md#67-sleep-locks-引出不用自旋锁-spinlock)
+  - [6.8 Real world](./docs/drafts/lec.10.md#68-real-world)
+  - [6.9 Exercises](./docs/drafts/lec.10.md#69-exercises)
+
+课堂笔记：[./docs/drafts/lec.10c.md](./docs/drafts/lec.10c.md)
+- [为什么要使用锁？](./docs/drafts/lec.10c.md#为什么要使用锁)
+  - [为什么要使用多个CPU核](./docs/drafts/lec.10c.md#为什么要使用多个cpu核)
+  - [race condition 竞态条件](./docs/drafts/lec.10c.md#race-condition-竞态条件)
+  - [critical section 临界区](./docs/drafts/lec.10c.md#critical-section-临界区)
+- [什么时候使用锁？](./docs/drafts/lec.10c.md#什么时候使用锁)
+  - [能通过自动的创建锁来自动避免race condition吗？（不能）](./docs/drafts/lec.10c.md#能通过自动的创建锁来自动避免race-condition吗不能)
+- [锁的特性和死锁](./docs/drafts/lec.10c.md#锁的特性和死锁)
+  - [锁缺点：死锁](./docs/drafts/lec.10c.md#锁缺点死锁)
+  - [锁缺点：破坏模块化](./docs/drafts/lec.10c.md#锁缺点破坏模块化)
+  - [锁缺点：影响性能](./docs/drafts/lec.10c.md#锁缺点影响性能)
+- [锁是如何在XV6中工作的（以UART为例）](./docs/drafts/lec.10c.md#锁是如何在xv6中工作的以uart为例)
+  - [消费者-生产者模式](./docs/drafts/lec.10c.md#消费者-生产者模式)
+  - [uart中的函数](./docs/drafts/lec.10c.md#uart中的函数)
+- [自旋锁 spin lock 的实现](./docs/drafts/lec.10c.md#自旋锁-spin-lock-的实现)
+  - [test-and-set 操作原子性指令 amoswap](./docs/drafts/lec.10c.md#test-and-set-操作原子性指令-amoswap)
+  - [spinlock 具体实现（acquire 和 release）](./docs/drafts/lec.10c.md#spinlock-具体实现acquire-和-release)
+  - [为什么在acquire函数的最开始，会先关闭中断？](./docs/drafts/lec.10c.md#为什么在acquire函数的最开始会先关闭中断)
+  - [memory ordering 防止指令顺序被优化](./docs/drafts/lec.10c.md#memory-ordering-防止指令顺序被优化)
+
+#### LEC 11 (rtm): Thread switching
+
+oct 14
+
+- LEC 11 (rtm): [Thread switching](./docs/lec/l-threads.txt) ([video](https://youtu.be/vsgrTHY5tkg))
+- Preparation: Read "[Scheduling](./docs/lec/book-riscv-rev1.pdf)" through Section 7.4, and kernel/proc.c, kernel/swtch.S
+- Assignment: <a href="./docs/assignment/Lab_ Multithreading.html">Assignment: Lab thread: Multithreading</a>
+
+课前预习把书 7.4 读了：[./docs/drafts/lec.11.md](./docs/drafts/lec.11.md)
+- [Chapter 7 Scheduling](./docs/drafts/lec.11.md#chapter-7-scheduling)
+  - [7.4 Code: mycpu and myproc](./docs/drafts/lec.11.md#74-code-mycpu-and-myproc)
+
+听课笔记：[./docs/drafts/lec.11c.md](./docs/drafts/lec.11c.md)
+- [线程（Thread）概述](./docs/drafts/lec.11c.md#线程thread概述)
+  - [线程的状态（PC、寄存器、Stack）](./docs/drafts/lec.11c.md#线程的状态pc-寄存器-stack)
+  - [Xv6 线程机制与 Linux 是不同的](./docs/drafts/lec.11c.md#xv6-线程机制与-linux-是不同的)
+  - [实现内核中的线程系统存在以下挑战](./docs/drafts/lec.11c.md#实现内核中的线程系统存在以下挑战)
+- [Xv6 线程调度](./docs/drafts/lec.11c.md#xv6-线程调度)
+  - [处理运算密集型线程的策略（利用定时器中断， pre-emptive scheduling 与 voluntary scheduling ）](./docs/drafts/lec.11c.md#处理运算密集型线程的策略利用定时器中断-pre-emptive-scheduling-与-voluntary-scheduling)
+  - [Xv6 线程切换描述](./docs/drafts/lec.11c.md#xv6-线程切换描述)
+  - [更详细的线程调用描述](./docs/drafts/lec.11c.md#更详细的线程调用描述)
+  - [Xv6很简单，不区分线程进程概念（与 Xv6 对比）](./docs/drafts/lec.11c.md#xv6很简单不区分线程进程概念与-xv6-对比)
+- [从代码看进程调度](./docs/drafts/lec.11c.md#从代码看进程调度)
+  - [简单的用户进程演示](./docs/drafts/lec.11c.md#简单的用户进程演示)
+  - [yield 与 sched 函数](./docs/drafts/lec.11c.md#yield-与-sched-函数)
+  - [swtch函数（把 callee 寄存器保存）](./docs/drafts/lec.11c.md#swtch函数把-callee-寄存器保存)
+  - [scheduler函数以及锁完成的事情](./docs/drafts/lec.11c.md#scheduler函数以及锁完成的事情)
+  - [XV6线程第一次调用swtch函数以及forkret](./docs/drafts/lec.11c.md#xv6线程第一次调用swtch函数以及forkret)
+- [本节课精华：swtch函数](./docs/drafts/lec.11c.md#本节课精华swtch函数)
+
+作业很简单：[./docs/drafts/lec.11hw.md](./docs/drafts/lec.11hw.md)
+- [Uthread: switching between threads （用户态模拟线程切换）](./docs/drafts/lec.11hw.md#uthread-switching-between-threads-用户态模拟线程切换)
+- [Using threads 基于 unix 库给 pthread 加锁](./docs/drafts/lec.11hw.md#using-threads-基于-unix-库给-pthread-加锁)
+- [Barrier 使用条件变量](./docs/drafts/lec.11hw.md#barrier-使用条件变量)
+
+#### LEC 12 (rtm): Q&A labs
+
+oct 19
+
+- LEC 12 (rtm): Q&A labs ([video](https://youtu.be/S8ZTJKzhQao))
+
+这节课不记录了。
+
+#### LEC 13 (rtm): sleep&wakeup and code
+
+oct 21
+
+- LEC 13 (rtm): [sleep&wakeup](./docs/lec/l-coordination.txt) and [code](./docs/lec/l-coordination.c) ([video](https://youtu.be/gP67sJ4PTnc))
+- Preparation: Read remainder of "[Scheduling](./docs/lec/book-riscv-rev1.pdf)", and corresponding parts of kernel/proc.c, kernel/sleeplock.c
+- Assignment: <a href="./docs/assignment/Lab_ locks.html">Lab lock: Parallelism/locking</a>
+
+读书收获总是很小，因此先把课听了，之后有什么问题再查书。听课笔记：[./docs/drafts/lec.13c.md](./docs/drafts/lec.13c.md)
+- [线程切换过程中锁的限制](./docs/drafts/lec.13c.md#线程切换过程中锁的限制)
+  - [xv6 不允许进程在执行 switch 函数的过程中，持有任何其他的锁](./docs/drafts/lec.13c.md#xv6-不允许进程在执行-switch-函数的过程中持有任何其他的锁)
+- [通过Sleep与Wakeup实现Coordination](./docs/drafts/lec.13c.md#通过sleep与wakeup实现coordination)
+  - [如何设计让进程等待特点事件？](./docs/drafts/lec.13c.md#如何设计让进程等待特点事件)
+  - [以修改后的UART的驱动代码看如何Sleep&Wakeup](./docs/drafts/lec.13c.md#以修改后的uart的驱动代码看如何sleepwakeup)
+- [sleep函数为什么需要一个锁使用作为参数传入](./docs/drafts/lec.13c.md#sleep函数为什么需要一个锁使用作为参数传入)
+  - [lost wakeup 带来的问题](./docs/drafts/lec.13c.md#lost-wakeup-带来的问题)
+  - [用 broken_sleep 修改代码导致的lose wakeup](./docs/drafts/lec.13c.md#用-broken_sleep-修改代码导致的lose-wakeup)
+  - [如何避免Lost wakeup（wakeup和sleep的实现）](./docs/drafts/lec.13c.md#如何避免lost-wakeupwakeup和sleep的实现)
+- [Pipe 中的 sleep 和 wakeup](./docs/drafts/lec.13c.md#pipe-中的-sleep-和-wakeup)
+- [一些 Coordination 相关的系统调用](./docs/drafts/lec.13c.md#一些-coordination-相关的系统调用)
+  - [exit](./docs/drafts/lec.13c.md#exit)
+  - [wait](./docs/drafts/lec.13c.md#wait)
+  - [kill](./docs/drafts/lec.13c.md#kill)
+  - [init 进程会退出吗？](./docs/drafts/lec.13c.md#init-进程会退出吗)
+- [个人总结： sleep 与 spinlock 的区别](./docs/drafts/lec.13c.md#个人总结-sleep-与-spinlock-的区别)
+
+课上没讲的信号量 semaphore ，读书看看：[./docs/drafts/lec.13.md](./docs/drafts/lec.13.md)
+- [Chapter 7 Scheduling](./docs/drafts/lec.13.md#chapter-7-scheduling)
+  - [7.5 Sleep and wakeup 信号量 semaphore](./docs/drafts/lec.13.md#75-sleep-and-wakeup-信号量-semaphore)
+    - [PV 操作](./docs/drafts/lec.13.md#pv-操作)
+    - [一个生产者一个消费者模型示例](./docs/drafts/lec.13.md#一个生产者一个消费者模型示例)
+    - [企图解决 lost wakeup 的讨论](./docs/drafts/lec.13.md#企图解决-lost-wakeup-的讨论)
+  - [7.9 Real world 注意到 Xv6 不支持信号量](./docs/drafts/lec.13.md#79-real-world-注意到-xv6-不支持信号量)
+
+把实验做了吧：[./docs/drafts/lec.13hw.md](./docs/drafts/lec.13hw.md)
+- [Memory allocator 每个 CPU 核单独一个 freelist 链表](./docs/drafts/lec.13hw.md#memory-allocator-每个-cpu-核单独一个-freelist-链表)
+- [Buffer cache 把 bcache 分桶（分成多个链表），这样可以分解加锁的压力](./docs/drafts/lec.13hw.md#buffer-cache-把-bcache-分桶分成多个链表这样可以分解加锁的压力)
+
+#### LEC 14 (fk): File systems
+
+oct 26
+
+- LEC 14 (fk): [File systems](./docs/lec/l-fs.txt) ([boards](./docs/lec/l-fs.pdf)) ([video](https://youtu.be/ADzLv1nRtR8))
+- Preparation: Read kernel/bio.c, kernel/fs.c, kernel/sysfile.c, kernel/file.c and ["File system" (except for the logging sections)](./docs/lec/book-riscv-rev1.pdf)
+
+先把课听了：[./docs/drafts/lec.14c.md](./docs/drafts/lec.14c.md)
+- [文件系统特性](./docs/drafts/lec.14c.md#文件系统特性)
+- [File System 文件系统](./docs/drafts/lec.14c.md#file-system-文件系统)
+  - [从系统调用推测文件系统大概实现](./docs/drafts/lec.14c.md#从系统调用推测文件系统大概实现)
+  - [现代数据库往往建立在操作系统文件系统上](./docs/drafts/lec.14c.md#现代数据库往往建立在操作系统文件系统上)
+  - [文件系统结构概述](./docs/drafts/lec.14c.md#文件系统结构概述)
+  - [文件系统与 disk 存储设备](./docs/drafts/lec.14c.md#文件系统与-disk-存储设备)
+    - [术语：sectors和blocks](./docs/drafts/lec.14c.md#术语sectors和blocks)
+    - [存储设备概述](./docs/drafts/lec.14c.md#存储设备概述)
+  - [inode](./docs/drafts/lec.14c.md#inode)
+    - [从哪个 block 开始读取？](./docs/drafts/lec.14c.md#从哪个-block-开始读取)
+    - [directory 目录](./docs/drafts/lec.14c.md#directory-目录)
+- [从代码角度认识 file system](./docs/drafts/lec.14c.md#从代码角度认识-file-system)
+  - [运行 echo 时文件系统的变化](./docs/drafts/lec.14c.md#运行-echo-时文件系统的变化)
+  - [XV6创建inode代码（涉及 sys_open 、 create 以及 bio.c）](./docs/drafts/lec.14c.md#xv6创建inode代码涉及-sys_open-create-以及-bioc)
+- [Sleep Lock](./docs/drafts/lec.14c.md#sleep-lock)
+- [总结](./docs/drafts/lec.14c.md#总结)
+
+趁热打铁，把下节课课后 Lab fs: File system 写了吧：[./docs/drafts/lec.14hw.md](./docs/drafts/lec.14hw.md)
+- [Large files 将 inode 的 block 改为二级映射](./docs/drafts/lec.14hw.md#large-files-将-inode-的-block-改为二级映射)
+- [Symbolic links 实现软链接 soft link 系统调用](./docs/drafts/lec.14hw.md#symbolic-links-实现软链接-soft-link-系统调用)
+
+#### LEC 15 (fk): Crash recovery
+
+oct 28
+
+- LEC 15 (fk): [Crash recovery](./docs/lec/l-crash.txt) ([boards](./docs/lec/l-crash.pdf)) [video](https://youtu.be/7Hk2dIorDkk)
+- Preparation: Read kernel/log.c and the [logging sections of "File system"](../mit6.s081/docs/lec/book-riscv-rev1.pdf)
+- Assignment: <a href="./docs/assignment/Lab_ file system.html">Lab fs: File system</a>
+
+这个 Lab 在上节课课后写了。
+
+首先先把课听了：[./docs/drafts/lec.15c.md](./docs/drafts/lec.15c.md)
+- [File System Crash 概述](./docs/drafts/lec.15c.md#file-system-crash-概述)
+- [File System Crash 示例](./docs/drafts/lec.15c.md#file-system-crash-示例)
+  - [如果没有 logging 会有什么后果](./docs/drafts/lec.15c.md#如果没有-logging-会有什么后果)
+- [File System Logging](./docs/drafts/lec.15c.md#file-system-logging)
+  - [一些 log 基本操作（log_write 和 commit 等）](./docs/drafts/lec.15c.md#一些-log-基本操作log_write-和-commit-等)
+  - [更复杂的情况（在 log 相关操作时 crash ）](./docs/drafts/lec.15c.md#更复杂的情况在-log-相关操作时-crash)
+  - [xv6 中简单的 logging 方案（header block 结构等）](./docs/drafts/lec.15c.md#xv6-中简单的-logging-方案header-block-结构等)
+- [从代码看 logging 机制](./docs/drafts/lec.15c.md#从代码看-logging-机制)
+  - [log_write 函数与 transaction 事务](./docs/drafts/lec.15c.md#log_write-函数与-transaction-事务)
+  - [end_op 函数（如何 commit ）](./docs/drafts/lec.15c.md#end_op-函数如何-commit)
+  - [File System Recovering](./docs/drafts/lec.15c.md#file-system-recovering)
+  - [Log 写磁盘流程](./docs/drafts/lec.15c.md#log-写磁盘流程)
+- [File System Challenges](./docs/drafts/lec.15c.md#file-system-challenges)
+  - [cache eviction （用 bpin 保证 write ahead rule ）](./docs/drafts/lec.15c.md#cache-eviction-用-bpin-保证-write-ahead-rule)
+  - [文件系统操作必须适配 log 的大小](./docs/drafts/lec.15c.md#文件系统操作必须适配-log-的大小)
+  - [并发文件系统调用](./docs/drafts/lec.15c.md#并发文件系统调用)
+
+#### LEC 16 (rtm): File system performance and fast crash recovery
+
+nov 2
+
+- LEC 16 (rtm): [File system performance and fast crash recovery](./docs/lec/l-journal.txt) ([video](https://youtu.be/CmDcf6rjFb4))
+- Preparation: [Read Journaling the Linux ext2fs Filesystem (1998)](./docs/lec/journal-design.pdf)
+
+把课听了：[./docs/drafts/lec.16c.md](./docs/drafts/lec.16c.md)
+- [Logging 概述](./docs/drafts/lec.16c.md#logging-概述)
+  - [XV6 File System Logging 回顾](./docs/drafts/lec.16c.md#xv6-file-system-logging-回顾)
+    - [write ahead rule 和 freeing rule](./docs/drafts/lec.16c.md#write-ahead-rule-和-freeing-rule)
+  - [XV6 的 logging 有什么问题？](./docs/drafts/lec.16c.md#xv6-的-logging-有什么问题)
+- [ext3 file system log](./docs/drafts/lec.16c.md#ext3-file-system-log)
+  - [ext3 file system log format](./docs/drafts/lec.16c.md#ext3-file-system-log-format)
+  - [ext3 如何提升性能](./docs/drafts/lec.16c.md#ext3-如何提升性能)
+    - [异步的系统调用 asynchronous （fsync/flush）](./docs/drafts/lec.16c.md#异步的系统调用-asynchronous-fsyncflush)
+    - [批量执行 batching](./docs/drafts/lec.16c.md#批量执行-batching)
+    - [并发 concurrency](./docs/drafts/lec.16c.md#并发-concurrency)
+  - [ext3 文件系统调用格式](./docs/drafts/lec.16c.md#ext3-文件系统调用格式)
+  - [ext3 transaction commit 步骤](./docs/drafts/lec.16c.md#ext3-transaction-commit-步骤)
+  - [ext3 file system 恢复过程](./docs/drafts/lec.16c.md#ext3-file-system-恢复过程)
+  - [为什么新transaction需要等前一个transaction中系统调用执行完成](./docs/drafts/lec.16c.md#为什么新transaction需要等前一个transaction中系统调用执行完成)
+- [ext3 总结](./docs/drafts/lec.16c.md#ext3-总结)
+
+#### LEC 17 (fk): Virtual memory for applications
+
+nov 4
+
+- LEC 17 (fk): [Virtual memory for applications](./docs/lec/l-uservm.txt) ([boards](./docs/lec/l-uservm.pdf)) ([sqrt example](./docs/lec/sqrt.c)) ([baker example](./docs/lec/baker.c)) [video](https://youtu.be/YNQghIvk0jc)
+- Preparation: [Read Virtual Memory Primitives for User Programs (1991)](./docs/lec/appel-li.pdf)
+- Assignment: <a href="./docs/assignment/Lab_ mmap.html.html">Lab mmap: Mmap</a>
+
+把课听了：[./docs/drafts/lec.17c.md](./docs/drafts/lec.17c.md)
+- [应用程序使用虚拟内存所需要的特性](./docs/drafts/lec.17c.md#应用程序使用虚拟内存所需要的特性)
+- [支持应用程序使用虚拟内存的系统调用](./docs/drafts/lec.17c.md#支持应用程序使用虚拟内存的系统调用)
+  - [mmap](./docs/drafts/lec.17c.md#mmap)
+  - [mprotect](./docs/drafts/lec.17c.md#mprotect)
+  - [munmap](./docs/drafts/lec.17c.md#munmap)
+  - [sigaction](./docs/drafts/lec.17c.md#sigaction)
+- [虚拟内存系统实现](./docs/drafts/lec.17c.md#虚拟内存系统实现)
+  - [概述： VMA 和 User Level Trap](./docs/drafts/lec.17c.md#概述-vma-和-user-level-trap)
+  - [实例：构建一个大的缓存表（结合系统调用）](./docs/drafts/lec.17c.md#实例构建一个大的缓存表结合系统调用)
+- [Baker's Real-Time Copying Garbage Collector 垃圾回收机制](./docs/drafts/lec.17c.md#./docs/drafts/lec.17c.mdbakers-real-time-copying-garbage-collector-垃圾回收机制)
+  - [copying GC](./docs/drafts/lec.17c.md#copying-gc)
+  - [GC 如何使用虚拟内存特性](./docs/drafts/lec.17c.md#gc-如何使用虚拟内存特性)
+  - [代码：使用虚拟内存特性的GC](./docs/drafts/lec.17c.md#代码使用虚拟内存特性的gc)
+- [总结：应该使用虚拟内存吗？](./docs/drafts/lec.17c.md#总结应该使用虚拟内存吗)
