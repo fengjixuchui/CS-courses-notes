@@ -25,6 +25,13 @@
   - [LEC 15 (fk): Crash recovery](#lec-15-fk-crash-recovery)
   - [LEC 16 (rtm): File system performance and fast crash recovery](#lec-16-rtm-file-system-performance-and-fast-crash-recovery)
   - [LEC 17 (fk): Virtual memory for applications](#lec-17-fk-virtual-memory-for-applications)
+  - [LEC 18 (rtm): OS Organization](#lec-18-rtm-os-organization)
+  - [LEC 19 (rtm): Virtual Machines](#lec-19-rtm-virtual-machines)
+  - [LEC 20 (fk): Kernels and HLL](#lec-20-fk-kernels-and-hll)
+  - [LEC 21 (rtm): Networking](#lec-21-rtm-networking)
+  - [LEC 22 (rtm): Meltdown](#lec-22-rtm-meltdown)
+  - [LEC 23 (rtm): RCU](#lec-23-rtm-rcu)
+  - [LEC 24 (fk): Q&A](#lec-24-fk-qa)
 
 <!-- /code_chunk_output -->
 
@@ -546,7 +553,7 @@ nov 4
 
 - LEC 17 (fk): [Virtual memory for applications](./docs/lec/l-uservm.txt) ([boards](./docs/lec/l-uservm.pdf)) ([sqrt example](./docs/lec/sqrt.c)) ([baker example](./docs/lec/baker.c)) [video](https://youtu.be/YNQghIvk0jc)
 - Preparation: [Read Virtual Memory Primitives for User Programs (1991)](./docs/lec/appel-li.pdf)
-- Assignment: <a href="./docs/assignment/Lab_ mmap.html.html">Lab mmap: Mmap</a>
+- Assignment: <a href="./docs/assignment/Lab_ mmap.html">Lab mmap: Mmap</a>
 
 把课听了：[./docs/drafts/lec.17c.md](./docs/drafts/lec.17c.md)
 - [应用程序使用虚拟内存所需要的特性](./docs/drafts/lec.17c.md#应用程序使用虚拟内存所需要的特性)
@@ -563,3 +570,168 @@ nov 4
   - [GC 如何使用虚拟内存特性](./docs/drafts/lec.17c.md#gc-如何使用虚拟内存特性)
   - [代码：使用虚拟内存特性的GC](./docs/drafts/lec.17c.md#代码使用虚拟内存特性的gc)
 - [总结：应该使用虚拟内存吗？](./docs/drafts/lec.17c.md#总结应该使用虚拟内存吗)
+
+把 mmap 系统调用 map 做了吧：[./docs/drafts/lec.17hw.md](./docs/drafts/lec.17hw.md)
+- [写一个 mmap 和 munmap 系统调用](./docs/drafts/lec.17hw.md#写一个-mmap-和-munmap-系统调用)
+
+#### LEC 18 (rtm): OS Organization
+
+nov 9
+
+- LEC 18 (rtm): [OS Organization](./docs/lec/l-organization.txt) ([video](https://youtu.be/dM9PLdaTpnA))
+- Preparation: [Read The Performance of micro-Kernel-Based Systems (1997)](./docs/lec/microkernel.pdf)
+
+把课听了：[./docs/drafts/lec.18c.md](./docs/drafts/lec.18c.md)
+- [抽象能力强大的 Monolithic Kernel 宏内核](./docs/drafts/lec.18c.md#抽象能力强大的-monolithic-kernel-宏内核)
+  - [宏内核好处](./docs/drafts/lec.18c.md#宏内核好处)
+  - [宏内核劣势](./docs/drafts/lec.18c.md#宏内核劣势)
+- [Micro kernel 微内核](./docs/drafts/lec.18c.md#micro-kernel-微内核)
+  - [微内核的核心就是实现了IPC](./docs/drafts/lec.18c.md#微内核的核心就是实现了ipc)
+  - [micro kernel 使用动机](./docs/drafts/lec.18c.md#micro-kernel-使用动机)
+  - [micro kernel 内核面临挑战](./docs/drafts/lec.18c.md#micro-kernel-内核面临挑战)
+- [L4 micro kernel](./docs/drafts/lec.18c.md#l4-micro-kernel)
+  - [L4 的系统调用](./docs/drafts/lec.18c.md#l4-的系统调用)
+  - [L4提供的线程切换与 Pager](./docs/drafts/lec.18c.md#l4提供的线程切换与-pager)
+  - [Improving IPC by Kernel Design](./docs/drafts/lec.18c.md#improving-ipc-by-kernel-design)
+    - [基于 Unix Pipe 异步传输（较慢）](./docs/drafts/lec.18c.md#基于-unix-pipe-异步传输较慢)
+    - [L4 采用的 Synchronized 同步传输（简单快速）](./docs/drafts/lec.18c.md#l4-采用的-synchronized-同步传输简单快速)
+  - [Run Linux on Top of L4 Micro Kernel](./docs/drafts/lec.18c.md#run-linux-on-top-of-l4-micro-kernel)
+  - [L4 Linux 性能分析](./docs/drafts/lec.18c.md#l4-linux-性能分析)
+
+#### LEC 19 (rtm): Virtual Machines
+
+nov 16
+
+- LEC 19 (rtm): [Virtual Machines](./docs/lec/l-vmm.txt) ([video](https://youtu.be/R8obXHAIPY0))
+- Preparation: [Read Dune: Safe User-level Access to Privileged CPU Features (2012)](./docs/lec/belay-dune.pdf)
+
+把课听了：[./docs/drafts/lec.19c.md](./docs/drafts/lec.19c.md)
+- [Virtual Machine 虚拟机概述](./docs/drafts/lec.19c.md#virtual-machine-虚拟机概述)
+    - [虚拟机使用场景](./docs/drafts/lec.19c.md#虚拟机使用场景)
+- [Trap-and-Emulate](./docs/drafts/lec.19c.md#trap-and-emulate)
+  - [Trap](./docs/drafts/lec.19c.md#trap)
+  - [Emulate](./docs/drafts/lec.19c.md#emulate)
+  - [Page Table](./docs/drafts/lec.19c.md#page-table)
+  - [Devices](./docs/drafts/lec.19c.md#devices)
+- [硬件对虚拟机的支持（以 Intel VT-x 为例）](./docs/drafts/lec.19c.md#硬件对虚拟机的支持以-intel-vt-x-为例)
+- [Dune: Safe User-level Access to Privileged CPU Features](./docs/drafts/lec.19c.md#dune-safe-user-level-access-to-privileged-cpu-features)
+
+#### LEC 20 (fk): Kernels and HLL
+
+nov 18
+
+- LEC 20 (fk): [Kernels and HLL](./docs/lec/l-biscuit.txt) ([slides](./docs/lec/l-biscuit-slides.pdf)) [video](https://youtu.be/AAtXWGwxI9k)
+- Preparation: [Read the Biscuit paper (2018)](./docs/lec/biscuit.pdf), [FAQ](./docs/lec/faq-biscuit.txt)
+- Assignment: <a href="./docs/assignment/Lab_ networking.html">Lab net: Network stack</a>
+
+先把课听了：[./docs/drafts/lec.20c.md](./docs/drafts/lec.20c.md)
+- [C语言实现操作系统的优劣势](./docs/drafts/lec.20c.md#c语言实现操作系统的优劣势)
+  - [C 语言实现 OS 的优势](./docs/drafts/lec.20c.md#c-语言实现-os-的优势)
+  - [C 语言实现 OS 的劣势](./docs/drafts/lec.20c.md#c-语言实现-os-的劣势)
+- [高级编程语言（HLL）实现操作系统的优劣势](./docs/drafts/lec.20c.md#高级编程语言hll实现操作系统的优劣势)
+  - [高级编程语言实现 OS 优势](./docs/drafts/lec.20c.md#高级编程语言实现-os-优势)
+  - [高级编程语言实现 OS 劣势](./docs/drafts/lec.20c.md#高级编程语言实现-os-劣势)
+- [本节 HLL 论文概述](./docs/drafts/lec.20c.md#本节-hll-论文概述)
+  - [论文的目标是能够测量出高级编程语言的优劣势](./docs/drafts/lec.20c.md#论文的目标是能够测量出高级编程语言的优劣势)
+  - [高级编程语言选择 Golang](./docs/drafts/lec.20c.md#高级编程语言选择-golang)
+  - [Biscuit 操作系统](./docs/drafts/lec.20c.md#biscuit-操作系统)
+  - [Biscuit 实现的困难： Heap Exhaustion](./docs/drafts/lec.20c.md#biscuit-实现的困难-heap-exhaustion)
+    - [不能解决 Heap Exhaustion 的方案（strawman）](./docs/drafts/lec.20c.md#不能解决-heap-exhaustion-的方案strawman)
+    - [BISCUIT solution: reserve memory](./docs/drafts/lec.20c.md#biscuit-solution-reserve-memory)
+  - [HLL benefits 概述](./docs/drafts/lec.20c.md#hll-benefits-概述)
+    - [HLL benefits 之提供了 GC](./docs/drafts/lec.20c.md#hll-benefits-之提供了-gc)
+    - [Read-lock-free example （引出 RCU）](./docs/drafts/lec.20c.md#read-lock-free-example-引出-rcu)
+    - [HLL 是否能阻止前面提到的内核漏洞](./docs/drafts/lec.20c.md#hll-是否能阻止前面提到的内核漏洞)
+  - [HLL performance cost](./docs/drafts/lec.20c.md#hll-performance-cost)
+- [总结：Should one use HLL for a new kernel?](./docs/drafts/lec.20c.md#总结should-one-use-hll-for-a-new-kernel)
+  - [怎么在硬件上直接运行 Go runtime ？](./docs/drafts/lec.20c.md#怎么在硬件上直接运行-go-runtime)
+  - [关于 goroutine 其他问题](./docs/drafts/lec.20c.md#关于-goroutine-其他问题)
+
+lab 下节课听完再做。
+
+#### LEC 21 (rtm): Networking
+
+nov 30
+
+- LEC 21 (rtm): [Networking](./docs/lec/l-net.txt) ([video](https://youtu.be/Fcjychg4Tvk))
+- Preparation: [Read Receive Livelock (1996)](./docs/lec/mogul96usenix.pdf)
+
+这节课很重要，收获很大，让你彻底理解网络分层、协议栈：[./docs/drafts/lec.21c.md](./docs/drafts/lec.21c.md)
+- [计算机网络概述](./docs/drafts/lec.21c.md#计算机网络概述)
+  - [基本网络场景：局域网、路由](./docs/drafts/lec.21c.md#基本网络场景局域网-路由)
+  - [二层网络 Ethernet](./docs/drafts/lec.21c.md#二层网络-ethernet)
+  - [二/三层地址转换 ARP](./docs/drafts/lec.21c.md#二三层地址转换-arp)
+  - [三层网络 Internet](./docs/drafts/lec.21c.md#三层网络-internet)
+  - [四层网络 UDP](./docs/drafts/lec.21c.md#四层网络-udp)
+- [运行在主机上的网络协议栈 Network Stack](./docs/drafts/lec.21c.md#运行在主机上的网络协议栈-network-stack)
+  - [简单的网络协议栈分层图](./docs/drafts/lec.21c.md#简单的网络协议栈分层图)
+  - [packet的控制流程是如何工作](./docs/drafts/lec.21c.md#packet的控制流程是如何工作)
+  - [当 packet 送到网卡时](./docs/drafts/lec.21c.md#当-packet-送到网卡时)
+  - [Ring Buffer](./docs/drafts/lec.21c.md#ring-buffer)
+- [Receive Livelock](./docs/drafts/lec.21c.md#receive-livelock)
+  - [中断的 Livelock](./docs/drafts/lec.21c.md#中断的-livelock)
+  - [如何解决 Livelock](./docs/drafts/lec.21c.md#如何解决-livelock)
+
+把最后一个 lab 写了：[./docs/drafts/lec.21hw.md](./docs/drafts/lec.21hw.md)
+- [Lab: networking](./docs/drafts/lec.21hw.md#lab-networking-1)
+  - [阅读代码，一些知识点：大小端变量转换、 __attribute__((packed))](./docs/drafts/lec.21hw.md#阅读代码一些知识点大小端变量转换-__attribute__packed)
+  - [网络协议栈的实现](./docs/drafts/lec.21hw.md#网络协议栈的实现)
+  - [简历一个最简单的 socket 连接](./docs/drafts/lec.21hw.md#简历一个最简单的-socket-连接)
+  - [万物皆文件](./docs/drafts/lec.21hw.md#万物皆文件)
+  - [完成作业：向网卡传输数据，处理网卡中断](./docs/drafts/lec.21hw.md#完成作业向网卡传输数据处理网卡中断)
+
+#### LEC 22 (rtm): Meltdown
+
+dec 2
+
+- LEC 22 (rtm): [Meltdown](./docs/lec/l-meltdown.txt) ([video](https://youtu.be/WpKVr3p5rjE))
+- Preparation: Read [Meltdown (2018)](./docs/lec/meltdown.pdf)
+
+把课听了：[./docs/drafts/lec.22c.md](./docs/drafts/lec.22c.md)
+- [Meltdown 发生的背景](./docs/drafts/lec.22c.md#meltdown-发生的背景)
+  - [一个极简的 meltdown 例子](./docs/drafts/lec.22c.md#一个极简的-meltdown-例子)
+- [可能导致 Meltdown 成功的 CPU 特性](./docs/drafts/lec.22c.md#可能导致-meltdown-成功的-cpu-特性)
+  - [Speculative execution 预测执行](./docs/drafts/lec.22c.md#speculative-execution-预测执行)
+    - [预测执行例子（branch prediction 分支预测）](./docs/drafts/lec.22c.md#预测执行例子branch-prediction-分支预测)
+    - [为什么 Meltdown 能在分支预测生效](./docs/drafts/lec.22c.md#为什么-meltdown-能在分支预测生效)
+  - [CPU caches](./docs/drafts/lec.22c.md#cpu-caches)
+    - [L1 cache 和 L2 cache](./docs/drafts/lec.22c.md#l1-cache-和-l2-cache)
+    - [现代 CPU cache](./docs/drafts/lec.22c.md#现代-cpu-cache)
+    - [Flush and Reload 用 Cache 做 Meltdown](./docs/drafts/lec.22c.md#flush-and-reload-用-cache-做-meltdown)
+- [Meltdown Attack and Fix](./docs/drafts/lec.22c.md#meltdown-attack-and-fix)
+  - [Meltdown, including Flush+Reload](./docs/drafts/lec.22c.md#meltdown-including-flushreload)
+  - [Meltdown Fix](./docs/drafts/lec.22c.md#meltdown-fix)
+
+#### LEC 23 (rtm): RCU
+
+dec 7
+
+- LEC 23 (rtm): [RCU notes](./docs/lec/l-rcu.txt), [2018 slides](./docs/lec/l-rcu.pdf) ([video](https://youtu.be/KUwyCGMTeq8))
+- Preparation: Read [RCU paper (2013)](./docs/lec/rcu-decade-later.pdf), [FAQ](./docs/lec/rcu-faq.txt)
+
+把课听了：[./docs/drafts/lec.23c.md](./docs/drafts/lec.23c.md)
+
+- [引言：使用锁带来的问题](./docs/drafts/lec.23c.md#引言使用锁带来的问题)
+  - [自旋锁 spinlock 不能让人满意](./docs/drafts/lec.23c.md#自旋锁-spinlock-不能让人满意)
+  - [大量的场景只有读，因此自旋锁不合理](./docs/drafts/lec.23c.md#大量的场景只有读因此自旋锁不合理)
+- [读写锁 Read-Write Lock](./docs/drafts/lec.23c.md#读写锁-read-write-lock)
+  - [读写锁简单描述](./docs/drafts/lec.23c.md#读写锁简单描述)
+  - [读写锁会带来的问题](./docs/drafts/lec.23c.md#读写锁会带来的问题)
+- [RCU, Read Copy Update](./docs/drafts/lec.23c.md#rcu-read-copy-update)
+  - [RCU 实现基本讨论（规范写者行为，读者不加锁）](./docs/drafts/lec.23c.md#rcu-实现基本讨论规范写者行为读者不加锁)
+  - [RCU 修改写者行为：committing write （对数据结构有基本要求）](./docs/drafts/lec.23c.md#rcu-修改写者行为committing-write-对数据结构有基本要求)
+  - [RCU实现：Memory barrier](./docs/drafts/lec.23c.md#rcu实现memory-barrier)
+  - [RCU实现：读写规则](./docs/drafts/lec.23c.md#rcu实现读写规则)
+  - [RCU 代码示例](./docs/drafts/lec.23c.md#rcu-代码示例)
+  - [RCU 性能简单讨论](./docs/drafts/lec.23c.md#rcu-性能简单讨论)
+- [RCU 总结与问答](./docs/drafts/lec.23c.md#rcu-总结与问答)
+
+#### LEC 24 (fk): Q&A
+
+dec 9
+
+- LEC 24 (fk): Q&A ([video](https://youtu.be/W9m6m0OGNB8))
+
+最后的内容，没什么可记录的。所有的 lab 都已经 bug-free 并且 make grade 满分。
+
+🎉 完结撒花！
